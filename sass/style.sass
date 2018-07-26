@@ -1,0 +1,271 @@
+@mixin breakpoint($point)
+    @if $point == desktop-lg
+        @media (min-width: 1440px)
+            @content
+    @if $point == desktop
+        @media (max-width: 1280px)
+            @content
+    @if $point == tablet
+        @media (max-width: 900px)
+            @content
+    @if $point == phone
+        @media (max-width: 599px)
+            @content
+$color_default: #89a4c7
+$color_editing: #f95959
+
+ul
+    margin: 0
+    padding: 0
+    list-style: none
+a
+    text-decoration: none
+p
+    margin: 0
+button
+    outline: none
+    border: none
+    cursor: pointer
+input
+    outline: none
+    background: none
+*
+    box-sizing: border-box
+
+body,html
+    width: 100%
+    margin: 0
+    font-family: '微軟正黑體'
+    font-size: 16px
+.container
+    width: calc(90vw - 20px)
+    margin: 50px auto
+    &__overlay
+        width: 100%
+        height: 100%
+        position: fixed
+        display: flex
+        align-items: center
+        justify-content: center
+        background: rgba(0,0,0,0.6)
+        left: 0
+        top: 0
+        z-index: 50
+.more
+    width: 70%
+    height: 60%
+    position: relative
+    display: grid
+    align-items: center
+    justify-items: center
+    align-content: start
+    grid-gap: 20px
+    background: #fff
+    border-radius: 15px
+    padding: 30px
+    &__title
+        font-size: 1.5rem
+        font-weight: 900
+    &__subtitle
+        font-size: 1.2rem
+    &__info
+    &__hr
+        width: 100%
+        height: 2px
+        background: #aaa
+    &__note
+        width: 100%
+        position: relative
+    &__note__text
+        textarea
+            width: 100%
+            height: 100%
+            resize: none
+            outline: none
+            padding: 10px
+            overflow: auto
+        //border: none
+    i
+        margin-right: 10px
+        margin-left: 10px
+        &:first-child
+            margin-left: 0
+.mode__schedule
+    display: grid
+    grid-gap: 50px
+    grid-template-columns: 4fr 1fr
+.workout
+    &__schedule__wrapper
+        width: 100%
+        height: 100%
+        display: grid
+        grid-gap: 20px
+        align-content: start
+        justify-items: center
+        background-color: #fff
+        border-right: 2px solid #aaa
+        padding-right: 50px
+        color: #eee
+.schedule
+    position: relative
+    width: 100%
+    padding: 20px
+    background: #7da87b
+    border-radius: 10px
+    &__btn__wrap
+        position: absolute
+        display: grid
+        grid-auto-flow: column
+        grid-gap: 10px
+        font-size: 1.2rem
+        right: 20px
+        top: 15px
+    &__btn-add
+        margin-top: 10px
+        text-align: center
+        font-size: 1.5rem
+    &__title
+        font-size: 1.5rem
+        font-weight: 900
+        margin-bottom: 10px
+.schedule__list
+    display: grid
+    grid-template-columns: 1fr 1fr
+    align-items: center
+    padding: 10px 0px
+    border-bottom: 1px solid #eee
+    &:last-child
+        padding-bottom: 0
+        border-bottom: none
+    &__edit
+        grid-template-columns: 1.2rem 1fr 1fr
+    &__list__btn-delete
+    &__exercise
+        font-size: 1.2rem
+    &__info
+        display: grid
+        grid-gap: 5px
+        grid-template-columns: repeat(4, 1fr)
+        align-items: center
+        grid-auto-flow: column
+        i
+        margin-right: 8px
+.card
+    &__wrapper
+        display: grid
+        grid-gap: 20px
+        grid-template-columns: repeat(auto-fit, minmax(280px,1fr))
+        //height: 100vh
+        //overflow-y: scroll
+    &__content
+        position: relative
+        display: grid
+        grid-gap: 20px
+        padding: 10px 20px
+        color: #eee
+        background: $color_default
+        border-radius: 10px
+        transition: background 0.3s
+        cursor: pointer
+        &:hover
+        background: darken($color_default,15)
+        .btn__edit
+            opacity: 1
+    &__content-holder
+        overflow: hidden
+        background: $color_editing
+    &__content-overlay
+        display: grid
+        align-items: center
+        justify-items: center
+        position: absolute
+        width: 100%
+        height: 100%
+        background: lighten($color_default,15)
+        z-index: 10
+    &__main
+        position: relative
+        justify-self: center
+        text-align: center
+        letter-spacing: 1px
+        width: 80%
+    &__main__title
+        width: 100%
+        text-align: center
+        padding: 5px 0px
+        padding-left: 30px
+        color: #eee
+        font-weight: 900
+        font-size: 1.5rem
+        margin-bottom: 5px
+        border: none
+        &::placeholder
+            color: #ddd
+    &__main__subtitle
+        width: 100%
+        text-align: center
+        padding: 5px 0px
+        color: #eee
+        font-size: 1.2rem
+        border: none
+    &__info
+        display: grid
+        grid-gap: 10px
+    &__info__class
+        display: grid
+        align-items: center
+        justify-items: center
+        grid-template-columns: 1.2rem 1fr
+        border-bottom: 1px solid #eee
+        padding-bottom: 10px
+        padding-right: 1.2rem
+        &:last-child
+        border-bottom: none
+    &__input
+        width: 50%
+        text-align: center
+        border: 1px solid #eee
+        padding: 5px 0px
+        border: none
+        color: #eee
+        font-size: 1.1em
+        &::placeholder
+            color: #ddd
+.btn
+    cursor: pointer
+    transition: transform 0.3s
+    z-index: 5
+    &:hover
+        transform: scale(1.2)
+    &__delete
+        position: absolute
+        left: 20px
+        top: 10px
+        font-size: 1.2rem
+    &__edit
+        position: absolute
+        right: 20px
+        top: 10px
+        font-size: 1.2rem
+        opacity: 0
+    &__add
+        font-size: 2.5rem
+        transition: transform 0.3s
+        &:hover
+        transform: scale(1.2)
+    &__done
+        position: absolute
+        right: 20px
+        top: 10px
+        cursor: pointer
+    &__cancel
+        position: absolute
+        left: 20px
+        top: 10px
+        cursor: pointer
+        font-size: 1.2rem
+.isEditing
+    background: $color_editing
+    .btn__edit
+        opacity: 1
+    .btn__delete

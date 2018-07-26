@@ -1,0 +1,266 @@
+@charset "UTF-8";
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none; }
+
+a {
+  text-decoration: none; }
+
+p {
+  margin: 0; }
+
+button {
+  outline: none;
+  border: none;
+  cursor: pointer; }
+
+input {
+  outline: none;
+  background: none; }
+
+* {
+  box-sizing: border-box; }
+
+body, html {
+  width: 100%;
+  margin: 0;
+  font-family: '微軟正黑體';
+  font-size: 16px; }
+
+.container {
+  width: calc(90vw - 20px);
+  margin: 50px auto; }
+  .container__overlay {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    left: 0;
+    top: 0;
+    z-index: 50; }
+
+.more {
+  width: 70%;
+  height: 60%;
+  position: relative;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  align-content: start;
+  grid-gap: 20px;
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px; }
+  .more__title {
+    font-size: 1.5rem;
+    font-weight: 900; }
+  .more__subtitle {
+    font-size: 1.2rem; }
+  .more__hr {
+    width: 100%;
+    height: 2px;
+    background: #aaa; }
+  .more__note {
+    width: 100%;
+    position: relative; }
+  .more__note__text textarea {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    outline: none;
+    padding: 10px;
+    overflow: auto; }
+  .more i {
+    margin-right: 10px;
+    margin-left: 10px; }
+    .more i:first-child {
+      margin-left: 0; }
+
+.mode__schedule {
+  display: grid;
+  grid-gap: 50px;
+  grid-template-columns: 4fr 1fr; }
+
+.workout__schedule__wrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-gap: 20px;
+  align-content: start;
+  justify-items: center;
+  background-color: #fff;
+  border-right: 2px solid #aaa;
+  padding-right: 50px;
+  color: #eee; }
+
+.schedule {
+  position: relative;
+  width: 100%;
+  padding: 20px;
+  background: #7da87b;
+  border-radius: 10px; }
+  .schedule__btn__wrap {
+    position: absolute;
+    display: grid;
+    grid-auto-flow: column;
+    grid-gap: 10px;
+    font-size: 1.2rem;
+    right: 20px;
+    top: 15px; }
+  .schedule__btn-add {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 1.5rem; }
+  .schedule__title {
+    font-size: 1.5rem;
+    font-weight: 900;
+    margin-bottom: 10px; }
+
+.schedule__list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 10px 0px;
+  border-bottom: 1px solid #eee; }
+  .schedule__list:last-child {
+    padding-bottom: 0;
+    border-bottom: none; }
+  .schedule__list__edit {
+    grid-template-columns: 1.2rem 1fr 1fr; }
+  .schedule__list__exercise {
+    font-size: 1.2rem; }
+  .schedule__list__info {
+    display: grid;
+    grid-gap: 5px;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: center;
+    grid-auto-flow: column;
+    margin-right: 8px; }
+
+.card__wrapper {
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+.card__content {
+  position: relative;
+  display: grid;
+  grid-gap: 20px;
+  padding: 10px 20px;
+  color: #eee;
+  background: #89a4c7;
+  border-radius: 10px;
+  transition: background 0.3s;
+  cursor: pointer;
+  background: #557cae; }
+  .card__content .btn__edit {
+    opacity: 1; }
+
+.card__content-holder {
+  overflow: hidden;
+  background: #f95959; }
+
+.card__content-overlay {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #bdcce0;
+  z-index: 10; }
+
+.card__main {
+  position: relative;
+  justify-self: center;
+  text-align: center;
+  letter-spacing: 1px;
+  width: 80%; }
+
+.card__main__title {
+  width: 100%;
+  text-align: center;
+  padding: 5px 0px;
+  padding-left: 30px;
+  color: #eee;
+  font-weight: 900;
+  font-size: 1.5rem;
+  margin-bottom: 5px;
+  border: none; }
+  .card__main__title::placeholder {
+    color: #ddd; }
+
+.card__main__subtitle {
+  width: 100%;
+  text-align: center;
+  padding: 5px 0px;
+  color: #eee;
+  font-size: 1.2rem;
+  border: none; }
+
+.card__info {
+  display: grid;
+  grid-gap: 10px; }
+
+.card__info__class {
+  display: grid;
+  align-items: center;
+  justify-items: center;
+  grid-template-columns: 1.2rem 1fr;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  padding-right: 1.2rem;
+  border-bottom: none; }
+
+.card__input {
+  width: 50%;
+  text-align: center;
+  border: 1px solid #eee;
+  padding: 5px 0px;
+  border: none;
+  color: #eee;
+  font-size: 1.1em; }
+  .card__input::placeholder {
+    color: #ddd; }
+
+.btn {
+  cursor: pointer;
+  transition: transform 0.3s;
+  z-index: 5; }
+  .btn:hover {
+    transform: scale(1.2); }
+  .btn__delete {
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    font-size: 1.2rem; }
+  .btn__edit {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    font-size: 1.2rem;
+    opacity: 0; }
+  .btn__add {
+    font-size: 2.5rem;
+    transition: transform 0.3s;
+    transform: scale(1.2); }
+  .btn__done {
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer; }
+  .btn__cancel {
+    position: absolute;
+    left: 20px;
+    top: 10px;
+    cursor: pointer;
+    font-size: 1.2rem; }
+
+.isEditing {
+  background: #f95959; }
+  .isEditing .btn__edit {
+    opacity: 1; }
