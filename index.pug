@@ -10,69 +10,70 @@ body
 #app
     .container
         .container__overlay(v-show="isOverlayOpen")
-            .btn.btn__test(@click.prevent="playerGetTime") O
             .more
-                .btn.more__btn__close(@click.prevent="overlayClose") X
-                .more__title {{overlay.title}}
-                .more__subtitle {{overlay.subtitle}}
-                .more__hr
+                .more__header
+                    .btn.more__btn__close(@click.prevent="overlayClose")
+                        i.fas.fa-times
+                    .more__title {{overlay.title}}
+                    .more__subtitle {{overlay.subtitle}}
+                    .more__hr
                 ul.more__note
                     //- li.more__note__text
                     //-     textarea(placeholder="輸入筆記......")
-                    .more__player__wrapper(v-show="isPlayer")
+                    li.more__funcbar
+                        .btn.more__funcbar__btn
+                            i.fab.fa-youtube
+                        .btn.more__funcbar__btn
+                            i.fas.fa-comment-alt
+                    li.more__video__inputwrap
+                        .more__video__input
+                            | 影片連結 :
+                            input(type="text")
+                        .more__video__input
+                            | 開始時間 :
+                            input(type="text" placeholder="00:00")
+                        .more__video__input__btnok 確定
+                    li.more__player__wrapper(v-show="isPlayer")
                         #ytplayer
+                    li
+                        h1 GGGGGGGGGGGGGGGGGGG
         ul.card__wrapper
             li.card__content.card__content-holder(v-show="!isScheduleEdit")
                 .btn.btn__done(@click.prevent="addWorkout")
                     i.fas.fa-check
                 .btn.btn__cancel(@click.prevent="cancelAddWorkout")
-                    i.fas.fa-times-circle
+                    i.fas.fa-times
                 .card__main
                     input.card__main__title(type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位")
                     datalist(id="muscleList")
                         option(v-for="d in muscleList" :value="d")
                     input.card__input.card__main__subtitle(type="text" v-model="tempExercises" placeholder="訓練動作")
                 .card__info
-                    .card__info__class.weight
-                        i.fas.fa-dumbbell
-                        input.card__input(type="text" v-model="tempWeight" placeholder="重量" maxlength="4")
-                    .card__info__class.cycle
-                        i.fas.fa-sync-alt
-                        input.card__input(type="text" v-model="tempCycle" placeholder="組數")
-                    .card__info__class.rep
-                        i.fas.fa-redo-alt
-                        input.card__input(type="text" v-model="tempRep" placeholder="次數")
-                    .card__info__class.time
-                        i.fas.fa-stopwatch
-                        input.card__input(type="text" v-model="tempTime" placeholder="時間")
+                    //- .card__info__class.weight
+                    //-     i.fas.fa-dumbbell
+                    //-     input.card__input(type="text" v-model="tempWeight" placeholder="重量" maxlength="4")
+                    //- .card__info__class.cycle
+                    //-     i.fas.fa-sync-alt
+                    //-     input.card__input(type="text" v-model="tempCycle" placeholder="組數")
+                    //- .card__info__class.rep
+                    //-     i.fas.fa-redo-alt
+                    //-     input.card__input(type="text" v-model="tempRep" placeholder="次數")
+                    //- .card__info__class.time
+                    //-     i.fas.fa-stopwatch
+                    //-     input.card__input(type="text" v-model="tempTime" placeholder="時間")
                 .card__content-overlay(v-show="!isAdd")
                     .btn__add(@click.prevent="addEditing")
                         i.fas.fa-plus-circle
-            li.card__content(v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }" @click.prevent="overlayOpen(d)")
-                .btn.btn__edit(@click.prevent="editWorkout(d)")
-                    i.fas(v-bind:class="{'fa-edit': d.readonly, 'fa-check' : !d.readonly }")
-                .btn.btn__delete(@click="deleteWorkout(d)" v-show="!d.readonly")
+            li.card__content(v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }")
+                .btn.btn__more(@click.prevent="overlayOpen(d)")
+                    i.fas.fa-angle-down
+                .btn.btn__delete(@click="deleteWorkout(d)")
                     i.far.fa-trash-alt
 
                 .card__main
-                    input.card__main__title(type="text" list="muscleList" v-model="d.muscle" :readonly="d.readonly")
-                    datalist(id="muscleList")
-                        option(v-for="d in muscleList" :value="d")
-                    input.card__main__subtitle(type="text" v-model="d.exercises" :readonly="d.readonly")
+                    .card__main__title {{d.muscle}}
+                    .card__main__subtitle {{d.exercises}}
 
-                .card__info
-                    .card__info__class.weight
-                        i.fas.fa-dumbbell
-                        input.card__input(type="text" v-model="d.weight" :readonly="d.readonly")
-                    .card__info__class.cycle
-                        i.fas.fa-sync-alt
-                        input.card__input(type="text" v-model="d.cycle" :readonly="d.readonly")
-                    .card__info__class.rep
-                        i.fas.fa-redo-alt
-                        input.card__input(type="text" v-model="d.rep" :readonly="d.readonly")
-                    .card__info__class.time
-                        i.fas.fa-stopwatch
-                        input.card__input(type="text" v-model="d.time" :readonly="d.readonly")
 
     script(src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')

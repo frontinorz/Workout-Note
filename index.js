@@ -111,7 +111,7 @@ const app = new Vue({
         tempTime: "",
         isAdd: false,
         isScheduleEdit: false,
-        isOverlayOpen: false,
+        isOverlayOpen: true,
         isPlayer: true,
         exercisedata: data,
         scheduledata: scheduleList,
@@ -122,7 +122,7 @@ const app = new Vue({
         }
     },
     created(){
-        //this.playerInit();
+
     },
     mounted(){
         this.playerInit();

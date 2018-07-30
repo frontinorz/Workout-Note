@@ -11,23 +11,40 @@
 <div id="app">
   <div class="container">
     <div class="container__overlay" v-show="isOverlayOpen">
-      <div class="btn btn__test" @click.prevent="playerGetTime">O</div>
       <div class="more">
-        <div class="btn more__btn__close" @click.prevent="overlayClose">X</div>
-        <div class="more__title">{{overlay.title}}</div>
-        <div class="more__subtitle">{{overlay.subtitle}}</div>
-        <div class="more__hr"></div>
+        <div class="more__header">
+          <div class="btn more__btn__close" @click.prevent="overlayClose"><i class="fas fa-times"></i></div>
+          <div class="more__title">{{overlay.title}}</div>
+          <div class="more__subtitle">{{overlay.subtitle}}</div>
+          <div class="more__hr"></div>
+        </div>
         <ul class="more__note">
-          <div class="more__player__wrapper" v-show="isPlayer">
+          <li class="more__funcbar">
+            <div class="btn more__funcbar__btn"><i class="fab fa-youtube"></i></div>
+            <div class="btn more__funcbar__btn"><i class="fas fa-comment-alt"></i></div>
+          </li>
+          <li class="more__video__inputwrap">
+            <div class="more__video__input">影片連結 :
+              <input type="text">
+            </div>
+            <div class="more__video__input">開始時間 :
+              <input type="text" placeholder="00:00">
+            </div>
+            <div class="more__video__input__btnok">確定</div>
+          </li>
+          <li class="more__player__wrapper" v-show="isPlayer">
             <div id="ytplayer"></div>
-          </div>
+          </li>
+          <li>
+            <h1>GGGGGGGGGGGGGGGGGGG</h1>
+          </li>
         </ul>
       </div>
     </div>
     <ul class="card__wrapper">
       <li class="card__content card__content-holder" v-show="!isScheduleEdit">
         <div class="btn btn__done" @click.prevent="addWorkout"><i class="fas fa-check"></i></div>
-        <div class="btn btn__cancel" @click.prevent="cancelAddWorkout"><i class="fas fa-times-circle"></i></div>
+        <div class="btn btn__cancel" @click.prevent="cancelAddWorkout"><i class="fas fa-times"></i></div>
         <div class="card__main">
           <input class="card__main__title" type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位">
           <datalist id="muscleList">
@@ -35,47 +52,17 @@
           </datalist>
           <input class="card__input card__main__subtitle" type="text" v-model="tempExercises" placeholder="訓練動作">
         </div>
-        <div class="card__info">
-          <div class="card__info__class weight"><i class="fas fa-dumbbell"></i>
-            <input class="card__input" type="text" v-model="tempWeight" placeholder="重量" maxlength="4">
-          </div>
-          <div class="card__info__class cycle"><i class="fas fa-sync-alt"></i>
-            <input class="card__input" type="text" v-model="tempCycle" placeholder="組數">
-          </div>
-          <div class="card__info__class rep"><i class="fas fa-redo-alt"></i>
-            <input class="card__input" type="text" v-model="tempRep" placeholder="次數">
-          </div>
-          <div class="card__info__class time"><i class="fas fa-stopwatch"></i>
-            <input class="card__input" type="text" v-model="tempTime" placeholder="時間">
-          </div>
-        </div>
+        <div class="card__info"></div>
         <div class="card__content-overlay" v-show="!isAdd">
           <div class="btn__add" @click.prevent="addEditing"><i class="fas fa-plus-circle"></i></div>
         </div>
       </li>
-      <li class="card__content" v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }" @click.prevent="overlayOpen(d)">
-        <div class="btn btn__edit" @click.prevent="editWorkout(d)"><i class="fas" v-bind:class="{'fa-edit': d.readonly, 'fa-check' : !d.readonly }"></i></div>
-        <div class="btn btn__delete" @click="deleteWorkout(d)" v-show="!d.readonly"><i class="far fa-trash-alt"></i></div>
+      <li class="card__content" v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }">
+        <div class="btn btn__more" @click.prevent="overlayOpen(d)"><i class="fas fa-angle-down"></i></div>
+        <div class="btn btn__delete" @click="deleteWorkout(d)"><i class="far fa-trash-alt"></i></div>
         <div class="card__main">
-          <input class="card__main__title" type="text" list="muscleList" v-model="d.muscle" :readonly="d.readonly">
-          <datalist id="muscleList">
-            <option v-for="d in muscleList" :value="d"></option>
-          </datalist>
-          <input class="card__main__subtitle" type="text" v-model="d.exercises" :readonly="d.readonly">
-        </div>
-        <div class="card__info">
-          <div class="card__info__class weight"><i class="fas fa-dumbbell"></i>
-            <input class="card__input" type="text" v-model="d.weight" :readonly="d.readonly">
-          </div>
-          <div class="card__info__class cycle"><i class="fas fa-sync-alt"></i>
-            <input class="card__input" type="text" v-model="d.cycle" :readonly="d.readonly">
-          </div>
-          <div class="card__info__class rep"><i class="fas fa-redo-alt"></i>
-            <input class="card__input" type="text" v-model="d.rep" :readonly="d.readonly">
-          </div>
-          <div class="card__info__class time"><i class="fas fa-stopwatch"></i>
-            <input class="card__input" type="text" v-model="d.time" :readonly="d.readonly">
-          </div>
+          <div class="card__main__title">{{d.muscle}}</div>
+          <div class="card__main__subtitle">{{d.exercises}}</div>
         </div>
       </li>
     </ul>
