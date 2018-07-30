@@ -10,16 +10,17 @@
 <body></body>
 <div id="app">
   <div class="container">
-    <div class="container__overlay">
+    <div class="container__overlay" v-show="isOverlayOpen">
+      <div class="btn btn__test" @click.prevent="playerGetTime">O</div>
       <div class="more">
-        <div class="more__title">背肌</div>
-        <div class="more__subtitle">啞鈴划船</div>
-        <div class="more__info"><i class="fas fa-dumbbell"></i>10<i class="fas fa-sync-alt"></i>3<i class="fas fa-redo-alt"></i>12<i class="fas fa-stopwatch"></i>0</div>
+        <div class="btn more__btn__close" @click.prevent="overlayClose">X</div>
+        <div class="more__title">{{overlay.title}}</div>
+        <div class="more__subtitle">{{overlay.subtitle}}</div>
         <div class="more__hr"></div>
         <ul class="more__note">
-          <li class="more__note__text">
-            <textarea placeholder="輸入筆記......"></textarea>
-          </li>
+          <div class="more__player__wrapper" v-show="isPlayer">
+            <div id="ytplayer"></div>
+          </div>
         </ul>
       </div>
     </div>
@@ -47,11 +48,12 @@
           <div class="card__info__class time"><i class="fas fa-stopwatch"></i>
             <input class="card__input" type="text" v-model="tempTime" placeholder="時間">
           </div>
-          <div class="card__content-overlay" v-show="!isAdd"></div>
+        </div>
+        <div class="card__content-overlay" v-show="!isAdd">
           <div class="btn__add" @click.prevent="addEditing"><i class="fas fa-plus-circle"></i></div>
         </div>
       </li>
-      <li class="card__content" v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }">
+      <li class="card__content" v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }" @click.prevent="overlayOpen(d)">
         <div class="btn btn__edit" @click.prevent="editWorkout(d)"><i class="fas" v-bind:class="{'fa-edit': d.readonly, 'fa-check' : !d.readonly }"></i></div>
         <div class="btn btn__delete" @click="deleteWorkout(d)" v-show="!d.readonly"><i class="far fa-trash-alt"></i></div>
         <div class="card__main">
@@ -80,5 +82,6 @@
   </div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://www.youtube.com/player_api"></script>
   <script src="index.js"></script>
 </div>

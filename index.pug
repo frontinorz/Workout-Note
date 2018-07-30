@@ -9,23 +9,18 @@ head
 body
 #app
     .container
-        .container__overlay
+        .container__overlay(v-show="isOverlayOpen")
+            .btn.btn__test(@click.prevent="playerGetTime") O
             .more
-                .more__title 背肌
-                .more__subtitle 啞鈴划船
-                .more__info
-                    i.fas.fa-dumbbell
-                    | 10
-                    i.fas.fa-sync-alt
-                    | 3
-                    i.fas.fa-redo-alt
-                    | 12
-                    i.fas.fa-stopwatch
-                    | 0
+                .btn.more__btn__close(@click.prevent="overlayClose") X
+                .more__title {{overlay.title}}
+                .more__subtitle {{overlay.subtitle}}
                 .more__hr
                 ul.more__note
-                    li.more__note__text
-                        textarea(placeholder="輸入筆記......")
+                    //- li.more__note__text
+                    //-     textarea(placeholder="輸入筆記......")
+                    .more__player__wrapper(v-show="isPlayer")
+                        #ytplayer
         ul.card__wrapper
             li.card__content.card__content-holder(v-show="!isScheduleEdit")
                 .btn.btn__done(@click.prevent="addWorkout")
@@ -50,10 +45,10 @@ body
                     .card__info__class.time
                         i.fas.fa-stopwatch
                         input.card__input(type="text" v-model="tempTime" placeholder="時間")
-                    .card__content-overlay(v-show="!isAdd")
+                .card__content-overlay(v-show="!isAdd")
                     .btn__add(@click.prevent="addEditing")
                         i.fas.fa-plus-circle
-            li.card__content(v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }")
+            li.card__content(v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }" @click.prevent="overlayOpen(d)")
                 .btn.btn__edit(@click.prevent="editWorkout(d)")
                     i.fas(v-bind:class="{'fa-edit': d.readonly, 'fa-check' : !d.readonly }")
                 .btn.btn__delete(@click="deleteWorkout(d)" v-show="!d.readonly")
@@ -81,4 +76,5 @@ body
 
     script(src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js')
     script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js')
+    script(src="https://www.youtube.com/player_api")
     script(src='index.js')
