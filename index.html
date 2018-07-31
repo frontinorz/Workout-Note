@@ -18,27 +18,23 @@
           <div class="more__subtitle">{{overlay.subtitle}}</div>
           <div class="more__hr"></div>
         </div>
-        <ul class="more__note">
-          <li class="more__funcbar">
-            <div class="btn more__funcbar__btn"><i class="fab fa-youtube"></i></div>
-            <div class="btn more__funcbar__btn"><i class="fas fa-comment-alt"></i></div>
-          </li>
-          <li class="more__video__inputwrap">
-            <div class="more__video__input">影片連結 :
+        <div class="more__content" v-bind:class="{'more__content__novideo' : !isPlayer}">
+          <div class="more__video__inputwrap">
+            <div class="more__video__input">Youtube連結
               <input type="text">
             </div>
-            <div class="more__video__input">開始時間 :
+            <div class="more__video__input">開始時間
               <input type="text" placeholder="00:00">
             </div>
             <div class="more__video__input__btnok">確定</div>
-          </li>
-          <li class="more__player__wrapper" v-show="isPlayer">
+          </div>
+          <div class="more__player__wrapper" v-show="isPlayer">
             <div id="ytplayer"></div>
-          </li>
-          <li>
-            <h1>GGGGGGGGGGGGGGGGGGG</h1>
-          </li>
-        </ul>
+          </div>
+          <div class="more__content__note">
+            <textarea placeholder="輸入筆記......"></textarea>
+          </div>
+        </div>
       </div>
     </div>
     <ul class="card__wrapper">

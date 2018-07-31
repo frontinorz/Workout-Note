@@ -9,6 +9,7 @@ head
 body
 #app
     .container
+
         .container__overlay(v-show="isOverlayOpen")
             .more
                 .more__header
@@ -17,26 +18,18 @@ body
                     .more__title {{overlay.title}}
                     .more__subtitle {{overlay.subtitle}}
                     .more__hr
-                ul.more__note
-                    //- li.more__note__text
-                    //-     textarea(placeholder="輸入筆記......")
-                    li.more__funcbar
-                        .btn.more__funcbar__btn
-                            i.fab.fa-youtube
-                        .btn.more__funcbar__btn
-                            i.fas.fa-comment-alt
-                    li.more__video__inputwrap
-                        .more__video__input
-                            | 影片連結 :
+                .more__content(v-bind:class="{'more__content__novideo' : !isPlayer}")
+                    .more__video__inputwrap
+                        .more__video__input Youtube連結
                             input(type="text")
-                        .more__video__input
-                            | 開始時間 :
+                        .more__video__input 開始時間
                             input(type="text" placeholder="00:00")
                         .more__video__input__btnok 確定
-                    li.more__player__wrapper(v-show="isPlayer")
+                    .more__player__wrapper(v-show="isPlayer")
                         #ytplayer
-                    li
-                        h1 GGGGGGGGGGGGGGGGGGG
+                    .more__content__note
+                        textarea(placeholder="輸入筆記......")
+
         ul.card__wrapper
             li.card__content.card__content-holder(v-show="!isScheduleEdit")
                 .btn.btn__done(@click.prevent="addWorkout")

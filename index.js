@@ -111,7 +111,7 @@ const app = new Vue({
         tempTime: "",
         isAdd: false,
         isScheduleEdit: false,
-        isOverlayOpen: true,
+        isOverlayOpen: false,
         isPlayer: true,
         exercisedata: data,
         scheduledata: scheduleList,
