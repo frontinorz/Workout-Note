@@ -2,47 +2,57 @@ const data = [
     {
         muscle: '背肌',
         exercises: '啞鈴划船',
-        weight: 10,
-        cycle: 3,
-        rep: 12,
-        time: 0,
         readonly: true,
         isVideo: true,
         video:{
             id: "N3z3DjxXpE4",
             startSec: "184"
-        }
+        },
+        note:""
     },
     {
         muscle: '胸肌',
         exercises: '平躺臥推',
-        weight: 20,
-        cycle: 4,
-        rep: 3,
-        time: 0,
+        readonly: true,
+        isVideo: false,
+        note: "筆記一"
+    },
+    {
+        muscle: '肩膀',
+        exercises: '啞鈴側舉',
+        readonly: true,
+        isVideo: false
+    },
+    {
+        muscle: '腹肌',
+        exercises: '側體平板',
         readonly: true,
         isVideo: false
     },
     {
         muscle: '肩膀',
-        exercises: '啞鈴側舉',
-        weight: 10,
-        cycle: 3,
-        rep: 8,
-        time: 0,
+        exercises: '啞鈴肩推',
+        readonly: true,
+        isVideo: false
+    },
+    {
+        muscle: '胸肌',
+        exercises: '槓片夾心',
         readonly: true,
         isVideo: false
     },
     {
         muscle: '腹肌',
         exercises: '平板體撐',
-        weight: 0,
-        cycle: 3,
-        rep: 0,
-        time: 50,
         readonly: true,
         isVideo: false
     },
+    {
+        muscle: '胸肌',
+        exercises: '平躺飛鳥',
+        readonly: true,
+        isVideo: false
+    }
 ];
 const scheduleList = [
     {
@@ -103,23 +113,31 @@ const scheduleList = [
 const app = new Vue({
     el: '#app',
     data: {
-        tempMuscle: "",
-        tempExercises: "",
-        tempWeight: "",
-        tempCycle: "",
-        tempRep: "",
-        tempTime: "",
         isAdd: false,
         isScheduleEdit: false,
         isOverlayOpen: false,
-        isPlayer: true,
+        isPlayer: false,
+        isSearchResult: true,
         exercisedata: data,
         scheduledata: scheduleList,
         player: {},
         overlay:{
             title: "Muscle",
             subtitle: "Exercise"
-        }
+        },
+        datanow: {},
+        tempMuscle: "",
+        tempExercises: "",
+        tempVideoId: "",
+        tempStartMin: "",
+        tempStartSec: "",
+        tempNote: "",
+        tempWeight: "",
+        tempCycle: "",
+        tempRep: "",
+        tempTime: "",
+        searchInput: "",
+        searchKeyword: ""
     },
     created(){
 
@@ -138,6 +156,31 @@ const app = new Vue({
                 arr.push(i);
             }
             return arr;
+        },
+        hasPlayer() {
+            return this.isPlayer;
+        },
+        checkVideoId() {
+            return /^(https\:\/\/youtu\.be\/)/.test(this.tempVideoId);
+        },
+        checkAddInput() {
+            return (this.tempMuscle !== "" && this.tempExercises !== "");
+        },
+        searchResualt() {
+            if (this.searchKeyword === '') {
+                return this.dataSort(this.exercisedata);
+            }
+            else{
+                let temp = this.exercisedata.filter(d => d.muscle.toLowerCase().indexOf(this.searchKeyword) > -1 ||
+                                                        d.exercises.toLowerCase().indexOf(this.searchKeyword) > -1 );
+                if(temp.length === 0){
+                    this.isSearchResult = false;
+                    return this.dataSort(this.exercisedata);
+                }else{
+                    this.isSearchResult = true;
+                    return this.dataSort(temp);
+                }
+            }
         }
     },
     methods: {
@@ -173,8 +216,9 @@ const app = new Vue({
             d.isEdit = !d.isEdit;
             this.isScheduleEdit = !this.isScheduleEdit;
         },
-        deleteWorkout(d) {
-            this.exercisedata.splice(this.exercisedata.indexOf(d), 1);
+        deleteWorkout() {
+            this.exercisedata.splice(this.exercisedata.indexOf(this.datanow), 1);
+            this.isOverlayOpen = false;
         },
         deleteSchedule(d) {
             this.scheduledata.splice(this.scheduledata.indexOf(d), 1);
@@ -192,31 +236,65 @@ const app = new Vue({
         },
         overlayOpen(d){
             this.isOverlayOpen = true;
+            this.datanow = d;
             this.overlay.title = d.muscle;
             this.overlay.subtitle = d.exercises;
+            this.tempNote = d.note;
             this.isPlayer = d.isVideo;
             if(d.isVideo)this.playerSet(d.video.id, d.video.startSec);
         },
         overlayClose() {
             this.isOverlayOpen = false;
+            this.datanow.note = this.tempNote;
             this.player.stopVideo();
         },
-        playerInit(){
+        dataSort(data) {
+            return data.sort((a, b) => a.muscle.localeCompare(b.muscle, 'zh-Hans-CN', {
+                        sensitivity: 'accent'
+                    }));
+        },
+        dataAddVideo() {
+            this.datanow.isVideo = true;
+            this.isPlayer = this.datanow.isVideo;
+            if (!this.datanow.video) this.datanow.video = {};
+            this.datanow.video.id = this.dataVideoIdTrans();
+            this.datanow.video.startSec = this.dataTimeTrans();
+            console.log("START : " + this.datanow.video.startSec);
+            this.playerSet(this.datanow.video.id, this.datanow.video.startSec);
+            this.tempVideoId = "";
+            this.tempStartSec = "";
+            this.tempStartMin = "";
+        },
+        dataTimeTrans() {
+            //console.log("SEC : " + this.tempStartSec+1 + " " + "MIN : " + this.tempStartMin);
+            this.tempStartSec = parseInt(this.tempStartSec) || 0;
+            this.tempStartMin = parseInt(this.tempStartMin) || 0;
+            if (this.tempStartSec > 59 || this.tempStartSec < 0) this.tempStartSec = 0;
+            if (this.tempStartMin > 59 || this.tempStartMin < 0 ) this.tempStartMin = 0;
+            // console.log("SEC : " + this.tempStartSec + " " + "MIN : " + this.tempStartMin);
+            return this.tempStartSec + this.tempStartMin * 60;
+        },
+        dataVideoIdTrans() {
+            return this.tempVideoId.replace("https://youtu.be/", "");
+        },
+        playerInit() {
             setTimeout(() => {
-                console.log("init");
                 this.player = new YT.Player('ytplayer', {
-                    //startSeconds: 5,
                     videoId: 'PEYBotdieQs',
                     'rel': 0
                 });
             }, 500);
         },
-        playerSet(id, startSec){
+        playerSet(id, startSec) {
             this.player.cueVideoById(id,startSec);
         },
-        playerGetTime(){
+        playerGetTime() {
             //let time = parseInt(this.player.getCurrentTime());
             this.player.seekTo(42, false);
+        },
+        searchCard() {
+            this.searchKeyword = this.searchInput.trim();
+            this.searchInput = "";
         }
     }
 });

@@ -13,49 +13,56 @@
     <div class="container__overlay" v-show="isOverlayOpen">
       <div class="more">
         <div class="more__header">
-          <div class="btn more__btn__close" @click.prevent="overlayClose"><i class="fas fa-times"></i></div>
+          <button class="btn more__btn__close" @click.prevent="overlayClose"><i class="fas fa-times"></i></button>
+          <button class="btn more__btn__delete" @click="deleteWorkout"><i class="far fa-trash-alt"></i></button>
           <div class="more__title">{{overlay.title}}</div>
           <div class="more__subtitle">{{overlay.subtitle}}</div>
           <div class="more__hr"></div>
         </div>
-        <div class="more__content" v-bind:class="{'more__content__novideo' : !isPlayer}">
+        <div class="more__content" v-bind:class="{'more__content__novideo' : !hasPlayer}">
           <div class="more__video__inputwrap">
-            <div class="more__video__input">Youtube連結
-              <input type="text">
+            <div class="more__video__input">Youtube分享連結
+              <input type="text" placeholder="https://youtu.be/......" v-model="tempVideoId" v-bind:class="{'more__video__input-error' : !checkVideoId}">
             </div>
             <div class="more__video__input">開始時間
-              <input type="text" placeholder="00:00">
+              <input class="input-2num" type="number" pattern="[0-9]*" placeholder="00" v-model="tempStartMin" min="0" max="59">分
+              <input class="input-2num" type="number" pattern="[0-9]*" placeholder="00" v-model="tempStartSec" min="0" max="59">秒
             </div>
-            <div class="more__video__input__btnok">確定</div>
+            <button class="more__video__input__btnok" @click.prevent="dataAddVideo" :disabled="!checkVideoId" V-bind:class="{'more__video__input__btnok-disable' : !checkVideoId}">加入影片</button>
           </div>
-          <div class="more__player__wrapper" v-show="isPlayer">
+          <div class="more__player__wrapper" v-show="hasPlayer">
             <div id="ytplayer"></div>
           </div>
           <div class="more__content__note">
-            <textarea placeholder="輸入筆記......"></textarea>
+            <textarea placeholder="輸入筆記......" v-model="tempNote"></textarea>
           </div>
         </div>
       </div>
     </div>
+    <div class="search">
+      <div class="search__bar">
+        <input class="search__input" type="text" placeholder="搜尋部位、動作......" v-model="searchInput" @keyup.enter="searchCard">
+        <button class="search__btnok" @click.prevent="searchCard"><i class="fas fa-search"></i></button>
+      </div>
+      <div class="search__fail" v-show="!isSearchResult">找不到有關 "{{searchKeyword}}" 的結果</div>
+    </div>
     <ul class="card__wrapper">
       <li class="card__content card__content-holder" v-show="!isScheduleEdit">
-        <div class="btn btn__done" @click.prevent="addWorkout"><i class="fas fa-check"></i></div>
-        <div class="btn btn__cancel" @click.prevent="cancelAddWorkout"><i class="fas fa-times"></i></div>
+        <button class="btn btn__done" @click.prevent="addWorkout" :disabled="!checkAddInput" v-bind:class="{'btn__disable' : !checkAddInput}"><i class="fas fa-check"></i></button>
+        <button class="btn btn__cancel" @click.prevent="cancelAddWorkout"><i class="fas fa-times"></i></button>
         <div class="card__main">
-          <input class="card__main__title" type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位">
+          <input class="card__main__title card__main__title-input" type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位">
           <datalist id="muscleList">
             <option v-for="d in muscleList" :value="d"></option>
           </datalist>
-          <input class="card__input card__main__subtitle" type="text" v-model="tempExercises" placeholder="訓練動作">
+          <input class="card__main__subtitle card__main__subtitle-input" type="text" v-model="tempExercises" placeholder="訓練動作">
         </div>
-        <div class="card__info"></div>
         <div class="card__content-overlay" v-show="!isAdd">
-          <div class="btn__add" @click.prevent="addEditing"><i class="fas fa-plus-circle"></i></div>
+          <button class="btn__add" @click.prevent="addEditing"><i class="fas fa-plus-circle"></i></button>
         </div>
       </li>
-      <li class="card__content" v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }">
-        <div class="btn btn__more" @click.prevent="overlayOpen(d)"><i class="fas fa-angle-down"></i></div>
-        <div class="btn btn__delete" @click="deleteWorkout(d)"><i class="far fa-trash-alt"></i></div>
+      <li class="card__content" v-for="(d,i) in searchResualt" v-bind:class="{'isEditing': !d.readonly }">
+        <button class="btn btn__more" @click.prevent="overlayOpen(d)"><i class="fas fa-angle-down"></i></button>
         <div class="card__main">
           <div class="card__main__title">{{d.muscle}}</div>
           <div class="card__main__subtitle">{{d.exercises}}</div>

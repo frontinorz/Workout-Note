@@ -12,57 +12,56 @@ body
 
         .container__overlay(v-show="isOverlayOpen")
             .more
+
                 .more__header
-                    .btn.more__btn__close(@click.prevent="overlayClose")
+                    button.btn.more__btn__close(@click.prevent="overlayClose")
                         i.fas.fa-times
+                    button.btn.more__btn__delete(@click="deleteWorkout")
+                        i.far.fa-trash-alt
                     .more__title {{overlay.title}}
                     .more__subtitle {{overlay.subtitle}}
                     .more__hr
-                .more__content(v-bind:class="{'more__content__novideo' : !isPlayer}")
+
+                .more__content(v-bind:class="{'more__content__novideo' : !hasPlayer}")
                     .more__video__inputwrap
-                        .more__video__input Youtube連結
-                            input(type="text")
+                        .more__video__input Youtube分享連結
+                            input(type="text" placeholder="https://youtu.be/......" v-model="tempVideoId" v-bind:class="{'more__video__input-error' : !checkVideoId}")
                         .more__video__input 開始時間
-                            input(type="text" placeholder="00:00")
-                        .more__video__input__btnok 確定
-                    .more__player__wrapper(v-show="isPlayer")
+                            input.input-2num(type="number" pattern="[0-9]*" placeholder="00" v-model="tempStartMin" min="0" max="59")
+                            |分
+                            input.input-2num(type="number" pattern="[0-9]*" placeholder="00" v-model="tempStartSec" min="0" max="59")
+                            |秒
+                        button.more__video__input__btnok(@click.prevent="dataAddVideo" :disabled="!checkVideoId" V-bind:class="{'more__video__input__btnok-disable' : !checkVideoId}") 加入影片
+                    .more__player__wrapper(v-show="hasPlayer")
                         #ytplayer
                     .more__content__note
-                        textarea(placeholder="輸入筆記......")
+                        textarea(placeholder="輸入筆記......" v-model="tempNote")
 
+        .search
+            .search__bar
+                input.search__input(type="text" placeholder="搜尋部位、動作......" v-model="searchInput" @keyup.enter="searchCard")
+                button.search__btnok(@click.prevent="searchCard")
+                    i.fas.fa-search
+            .search__fail(v-show="!isSearchResult") 找不到有關 "{{searchKeyword}}" 的結果
         ul.card__wrapper
+
             li.card__content.card__content-holder(v-show="!isScheduleEdit")
-                .btn.btn__done(@click.prevent="addWorkout")
+                button.btn.btn__done(@click.prevent="addWorkout" :disabled="!checkAddInput" v-bind:class="{'btn__disable' : !checkAddInput}")
                     i.fas.fa-check
-                .btn.btn__cancel(@click.prevent="cancelAddWorkout")
+                button.btn.btn__cancel(@click.prevent="cancelAddWorkout")
                     i.fas.fa-times
                 .card__main
-                    input.card__main__title(type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位")
+                    input.card__main__title.card__main__title-input(type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位")
                     datalist(id="muscleList")
                         option(v-for="d in muscleList" :value="d")
-                    input.card__input.card__main__subtitle(type="text" v-model="tempExercises" placeholder="訓練動作")
-                .card__info
-                    //- .card__info__class.weight
-                    //-     i.fas.fa-dumbbell
-                    //-     input.card__input(type="text" v-model="tempWeight" placeholder="重量" maxlength="4")
-                    //- .card__info__class.cycle
-                    //-     i.fas.fa-sync-alt
-                    //-     input.card__input(type="text" v-model="tempCycle" placeholder="組數")
-                    //- .card__info__class.rep
-                    //-     i.fas.fa-redo-alt
-                    //-     input.card__input(type="text" v-model="tempRep" placeholder="次數")
-                    //- .card__info__class.time
-                    //-     i.fas.fa-stopwatch
-                    //-     input.card__input(type="text" v-model="tempTime" placeholder="時間")
+                    input.card__main__subtitle.card__main__subtitle-input(type="text" v-model="tempExercises" placeholder="訓練動作")
                 .card__content-overlay(v-show="!isAdd")
-                    .btn__add(@click.prevent="addEditing")
+                    button.btn__add(@click.prevent="addEditing")
                         i.fas.fa-plus-circle
-            li.card__content(v-for="(d,i) in exercisedata" v-bind:class="{'isEditing': !d.readonly }")
-                .btn.btn__more(@click.prevent="overlayOpen(d)")
-                    i.fas.fa-angle-down
-                .btn.btn__delete(@click="deleteWorkout(d)")
-                    i.far.fa-trash-alt
 
+            li.card__content(v-for="(d,i) in searchResualt" v-bind:class="{'isEditing': !d.readonly }")
+                button.btn.btn__more(@click.prevent="overlayOpen(d)")
+                    i.fas.fa-angle-down
                 .card__main
                     .card__main__title {{d.muscle}}
                     .card__main__subtitle {{d.exercises}}
