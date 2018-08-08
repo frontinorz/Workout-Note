@@ -8,7 +8,70 @@
   <link rel="stylesheet" type="text/css" media="screen" href="style.css">
 </head>
 <body></body>
-<div id="app">
+<div class="modelist" id="app">
+  <div class="container-videocapture"></div>
+  <div class="container-list">
+    <ul class="schedule__wrapper">
+      <li class="schedule schedule__holder">
+        <input class="schedule__title" placeholder="課表名稱" v-model="tempScheduleName">
+        <div class="schedule__btn__wrap">
+          <div class="btn schedule__btn-delete" @click.prevent="scheduleCancel"><i class="fas fa-times"></i></div>
+          <div class="btn schedule__btn-edit" @click.prevent="scheduleAdd"><i class="fas fa-check"></i></div>
+        </div>
+        <div class="schedule__notice">點選動作卡片以加入課表</div>
+        <ul class="schedule__list__wrapper">
+          <li class="schedule__list schedule__list__edit" v-for="(a,i) in tempScheduleData">
+            <div class="btn schedule__list__btn-delete" @click.prevent="tempScheduleItemsDelete(a)"><i class="fas fa-times"></i></div>
+            <div class="schedule__list__exercise">{{i+1}}. {{a.exercises}}</div>
+            <div class="schedule__list__info">
+              <div class="schedule__list__weight"><i class="fas fa-dumbbell"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" min="0" v-model="a.weight" placeholder="重量">
+              </div>
+              <div class="schedule__list__cycle"><i class="fas fa-sync-alt"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" min="0" v-model="a.set" placeholder="組數">
+              </div>
+              <div class="schedule__list__rep"><i class="fas fa-redo-alt"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" min="0" v-model="a.rep" placeholder="次數">
+              </div>
+              <div class="schedule__list__time"><i class="fas fa-stopwatch"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" min="0" v-model="a.time" placeholder="時間">
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="schedule__holder__overlay" v-show="!isScheduleAdd">
+          <button class="btn__add" @click.prevent="scheduleNew"><i class="fas fa-plus-circle"></i></button>
+        </div>
+      </li>
+      <li class="schedule" v-for="(s, si) in scheduledata">
+        <input class="schedule__title" type="text" v-model="s.schedule" :readonly="!s.isEdit">
+        <div class="schedule__btn__wrap">
+          <div class="btn schedule__btn-delete" @click.prevent="scheduleDelete(s)" v-show="s.isEdit"><i class="far fa-trash-alt"></i></div>
+          <div class="btn schedule__btn-edit" @click.prevent="scheduleEdit(s)"><i class="fas" :class="{'fa-edit' : !s.isEdit, 'fa-check': s.isEdit}"></i></div>
+        </div>
+        <ul class="schedule__list__wrapper">
+          <li class="schedule__list" v-for="(a,i) in s.list" :class="{'schedule__list__edit' : s.isEdit }">
+            <div class="btn schedule__list__btn-delete" @click.prevent="scheduleItemsDelete(si,a)" v-show="s.isEdit"><i class="fas fa-times"></i></div>
+            <div class="schedule__list__exercise">{{i+1}}. {{a.exercises}}</div>
+            <div class="schedule__list__info">
+              <div class="schedule__list__weight"><i class="fas fa-dumbbell"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" v-model="a.weight" placeholder="重量" :readonly="!s.isEdit">
+              </div>
+              <div class="schedule__list__cycle"><i class="fas fa-sync-alt"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" v-model="a.set" placeholder="組數" :readonly="!s.isEdit">
+              </div>
+              <div class="schedule__list__rep"><i class="fas fa-redo-alt"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" v-model="a.rep" placeholder="次數" :readonly="!s.isEdit">
+              </div>
+              <div class="schedule__list__time"><i class="fas fa-stopwatch"></i>
+                <input class="schedule__input" type="number" pattern="[0-9]*" v-model="a.time" placeholder="時間" :readonly="!s.isEdit">
+              </div>
+            </div>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </div>
   <div class="container">
     <div class="container__overlay" v-show="isOverlayOpen">
       <div class="more">
@@ -47,7 +110,7 @@
       <div class="search__fail" v-show="!isSearchResult">找不到有關 "{{searchKeyword}}" 的結果</div>
     </div>
     <ul class="card__wrapper">
-      <li class="card__content card__content-holder" v-show="!isScheduleEdit">
+      <li class="card__content card__content-holder" v-show="!isScheduleAdd">
         <button class="btn btn__done" @click.prevent="addWorkout" :disabled="!checkAddInput" v-bind:class="{'btn__disable' : !checkAddInput}"><i class="fas fa-check"></i></button>
         <button class="btn btn__cancel" @click.prevent="cancelAddWorkout"><i class="fas fa-times"></i></button>
         <div class="card__main">
@@ -61,12 +124,12 @@
           <button class="btn__add" @click.prevent="addEditing"><i class="fas fa-plus-circle"></i></button>
         </div>
       </li>
-      <li class="card__content" v-for="(d,i) in searchResualt" v-bind:class="{'isEditing': !d.readonly }">
-        <button class="btn btn__more" @click.prevent="overlayOpen(d)"><i class="fas fa-angle-down"></i></button>
+      <li class="card__content" v-for="(d,i) in searchResualt" @click="scheduleItemsAdd(d)">
         <div class="card__main">
           <div class="card__main__title">{{d.muscle}}</div>
           <div class="card__main__subtitle">{{d.exercises}}</div>
         </div>
+        <button class="btn btn__more" @click.prevent="overlayOpen(d)"><i class="fas fa-angle-down"></i></button>
       </li>
     </ul>
   </div>

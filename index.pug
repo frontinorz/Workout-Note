@@ -7,12 +7,71 @@ head
     link(rel='stylesheet prefetch', href='https://use.fontawesome.com/releases/v5.1.1/css/all.css')
     link(rel='stylesheet', type='text/css', media='screen', href='style.css')
 body
-#app
-    .container
+#app.modelist
+    .container-videocapture
 
+    .container-list
+        ul.schedule__wrapper
+            li.schedule.schedule__holder
+                input.schedule__title(placeholder="課表名稱" v-model="tempScheduleName")
+                .schedule__btn__wrap
+                    .btn.schedule__btn-delete(@click.prevent="scheduleCancel")
+                        i.fas.fa-times
+                    .btn.schedule__btn-edit(@click.prevent="scheduleAdd")
+                        i.fas.fa-check
+                .schedule__notice 點選動作卡片以加入課表
+                ul.schedule__list__wrapper
+                    li.schedule__list.schedule__list__edit(v-for="(a,i) in tempScheduleData")
+                        .btn.schedule__list__btn-delete(@click.prevent="tempScheduleItemsDelete(a)")
+                            i.fas.fa-times
+                        .schedule__list__exercise {{i+1}}. {{a.exercises}}
+                        .schedule__list__info
+                            .schedule__list__weight
+                                i.fas.fa-dumbbell
+                                input.schedule__input(type="number" pattern="[0-9]*" min="0" v-model="a.weight" placeholder="重量")
+                            .schedule__list__cycle
+                                i.fas.fa-sync-alt
+                                input.schedule__input(type="number" pattern="[0-9]*" min="0" v-model="a.set" placeholder="組數")
+                            .schedule__list__rep
+                                i.fas.fa-redo-alt
+                                input.schedule__input(type="number" pattern="[0-9]*" min="0" v-model="a.rep" placeholder="次數")
+                            .schedule__list__time
+                                i.fas.fa-stopwatch
+                                input.schedule__input(type="number" pattern="[0-9]*" min="0" v-model="a.time" placeholder="時間")
+                .schedule__holder__overlay(v-show="!isScheduleAdd")
+                    button.btn__add(@click.prevent="scheduleNew")
+                        i.fas.fa-plus-circle
+
+            li.schedule(v-for="(s, si) in scheduledata")
+                input.schedule__title(type="text" v-model="s.schedule" :readonly="!s.isEdit")
+                .schedule__btn__wrap
+                    .btn.schedule__btn-delete(@click.prevent="scheduleDelete(s)" v-show="s.isEdit")
+                        i.far.fa-trash-alt
+                    .btn.schedule__btn-edit(@click.prevent="scheduleEdit(s)")
+                        i.fas(:class="{'fa-edit' : !s.isEdit, 'fa-check': s.isEdit}")
+                ul.schedule__list__wrapper
+                    li.schedule__list(v-for="(a,i) in s.list" :class="{'schedule__list__edit' : s.isEdit }")
+                        .btn.schedule__list__btn-delete(@click.prevent="scheduleItemsDelete(si,a)" v-show="s.isEdit")
+                            i.fas.fa-times
+                        .schedule__list__exercise {{i+1}}. {{a.exercises}}
+                        .schedule__list__info
+                            .schedule__list__weight
+                                i.fas.fa-dumbbell
+                                input.schedule__input(type="number" pattern="[0-9]*" v-model="a.weight" placeholder="重量" :readonly="!s.isEdit")
+                            .schedule__list__cycle
+                                i.fas.fa-sync-alt
+                                input.schedule__input(type="number" pattern="[0-9]*" v-model="a.set" placeholder="組數" :readonly="!s.isEdit")
+                            .schedule__list__rep
+                                i.fas.fa-redo-alt
+                                input.schedule__input(type="number" pattern="[0-9]*" v-model="a.rep" placeholder="次數" :readonly="!s.isEdit")
+                            .schedule__list__time
+                                i.fas.fa-stopwatch
+                                input.schedule__input(type="number" pattern="[0-9]*" v-model="a.time" placeholder="時間" :readonly="!s.isEdit")
+
+
+    .container
         .container__overlay(v-show="isOverlayOpen")
             .more
-
                 .more__header
                     button.btn.more__btn__close(@click.prevent="overlayClose")
                         i.fas.fa-times
@@ -45,7 +104,7 @@ body
             .search__fail(v-show="!isSearchResult") 找不到有關 "{{searchKeyword}}" 的結果
         ul.card__wrapper
 
-            li.card__content.card__content-holder(v-show="!isScheduleEdit")
+            li.card__content.card__content-holder(v-show="!isScheduleAdd")
                 button.btn.btn__done(@click.prevent="addWorkout" :disabled="!checkAddInput" v-bind:class="{'btn__disable' : !checkAddInput}")
                     i.fas.fa-check
                 button.btn.btn__cancel(@click.prevent="cancelAddWorkout")
@@ -59,12 +118,13 @@ body
                     button.btn__add(@click.prevent="addEditing")
                         i.fas.fa-plus-circle
 
-            li.card__content(v-for="(d,i) in searchResualt" v-bind:class="{'isEditing': !d.readonly }")
-                button.btn.btn__more(@click.prevent="overlayOpen(d)")
-                    i.fas.fa-angle-down
+            li.card__content(v-for="(d,i) in searchResualt" @click="scheduleItemsAdd(d)")
                 .card__main
                     .card__main__title {{d.muscle}}
                     .card__main__subtitle {{d.exercises}}
+                button.btn.btn__more(@click.prevent="overlayOpen(d)")
+                    i.fas.fa-angle-down
+
 
 
     script(src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js')

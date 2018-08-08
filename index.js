@@ -2,7 +2,6 @@ const data = [
     {
         muscle: '背肌',
         exercises: '啞鈴划船',
-        readonly: true,
         isVideo: true,
         video:{
             id: "N3z3DjxXpE4",
@@ -13,44 +12,37 @@ const data = [
     {
         muscle: '胸肌',
         exercises: '平躺臥推',
-        readonly: true,
         isVideo: false,
         note: "筆記一"
     },
     {
         muscle: '肩膀',
         exercises: '啞鈴側舉',
-        readonly: true,
         isVideo: false
     },
     {
         muscle: '腹肌',
         exercises: '側體平板',
-        readonly: true,
         isVideo: false
     },
     {
         muscle: '肩膀',
         exercises: '啞鈴肩推',
-        readonly: true,
         isVideo: false
     },
     {
         muscle: '胸肌',
         exercises: '槓片夾心',
-        readonly: true,
         isVideo: false
     },
     {
         muscle: '腹肌',
         exercises: '平板體撐',
-        readonly: true,
         isVideo: false
     },
     {
         muscle: '胸肌',
         exercises: '平躺飛鳥',
-        readonly: true,
         isVideo: false
     }
 ];
@@ -62,21 +54,21 @@ const scheduleList = [
             {
                 exercises: '啞鈴硬舉',
                 weight: 20,
-                cycle: 3,
+                set: 3,
                 rep: 4,
                 time: 0,
             },
             {
                 exercises: '啞鈴划船',
                 weight: 10,
-                cycle: 3,
+                set: 3,
                 rep: 12,
                 time: 0,
             },
             {
                 exercises: '啞鈴飛鳥',
                 weight: 10,
-                cycle: 3,
+                set: 3,
                 rep: 12,
                 time: 0,
             },
@@ -89,37 +81,41 @@ const scheduleList = [
             {
                 exercises: '平躺啞鈴推舉',
                 weight: 20,
-                cycle: 3,
+                set: 3,
                 rep: 4,
                 time: 0,
             },
             {
                 exercises: '平躺啞鈴飛鳥',
                 weight: 10,
-                cycle: 3,
+                set: 3,
                 rep: 12,
                 time: 0,
             },
             {
                 exercises: '槓片夾心',
                 weight: 4,
-                cycle: 3,
+                set: 3,
                 rep: 15,
                 time: 0,
             },
         ]
     }
 ];
+
+
 const app = new Vue({
     el: '#app',
     data: {
         isAdd: false,
         isScheduleEdit: false,
+        isScheduleAdd: false,
         isOverlayOpen: false,
         isPlayer: false,
         isSearchResult: true,
         exercisedata: data,
         scheduledata: scheduleList,
+        tempScheduleData: [],
         player: {},
         overlay:{
             title: "Muscle",
@@ -132,10 +128,7 @@ const app = new Vue({
         tempStartMin: "",
         tempStartSec: "",
         tempNote: "",
-        tempWeight: "",
-        tempCycle: "",
-        tempRep: "",
-        tempTime: "",
+        tempScheduleName: "",
         searchInput: "",
         searchKeyword: ""
     },
@@ -192,10 +185,6 @@ const app = new Vue({
             let work = {
                 muscle: this.tempMuscle,
                 exercises: this.tempExercises,
-                weight: this.tempWeight,
-                cycle: this.tempCycle,
-                rep: this.tempRep,
-                time: this.tempTime,
                 readonly: true
             };
             this.exercisedata.unshift(work);
@@ -206,33 +195,64 @@ const app = new Vue({
             this.isAdd = false;
             this.resetInput();
         },
+        deleteWorkout() {
+            this.exercisedata.splice(this.exercisedata.indexOf(this.datanow), 1);
+            this.isOverlayOpen = false;
+        },
         editWorkout(d) {
             this.exercisedata.forEach(data => { if (data !== d) data.readonly = true; });
             this.isAdd = false;
             d.readonly = !d.readonly;
         },
-        editSchedule(d) {
+        scheduleNew() {
+            this.isScheduleAdd = true;
+        },
+        scheduleCancel() {
+            this.tempScheduleName = "";
+            this.tempScheduleData = [];
+            this.isScheduleAdd = false;
+        },
+        scheduleAdd() {
+            if (!this.isScheduleAdd) return;
+            this.scheduledata.push({
+                schedule: this.tempScheduleName,
+                isEdit: false,
+                list: this.tempScheduleData
+            });
+            this.tempScheduleName = "";
+            this.tempScheduleData = [];
+            this.isScheduleAdd = false;
+        },
+        scheduleEdit(d) {
             this.scheduledata.forEach(data => { if (data !== d) data.isEdit = false; });
             d.isEdit = !d.isEdit;
             this.isScheduleEdit = !this.isScheduleEdit;
         },
-        deleteWorkout() {
-            this.exercisedata.splice(this.exercisedata.indexOf(this.datanow), 1);
-            this.isOverlayOpen = false;
-        },
-        deleteSchedule(d) {
+        scheduleDelete(d) {
             this.scheduledata.splice(this.scheduledata.indexOf(d), 1);
         },
-        deleteScheduleItems(s, a) {
+        scheduleItemsDelete(s, a) {
             this.scheduledata[s].list.splice(this.scheduledata[s].list.indexOf(a), 1);
         },
+        tempScheduleItemsDelete(a) {
+            this.tempScheduleData.splice(this.tempScheduleData.indexOf(a), 1);
+        },
+        scheduleItemsAdd(d) {
+            if (!this.isScheduleAdd) return;
+            let data = {
+                exercises: d.exercises,
+                weight: "",
+                set: "",
+                rep: "",
+                time: ""
+            };
+            this.tempScheduleData.push(data);
+            //console.log(this.tempScheduleData);
+        },
+
         resetInput() {
             this.tempMuscle = "";
             this.tempExercises = "";
-            this.tempWeight = "";
-            this.tempCycle = "";
-            this.tempRep = "";
-            this.tempTime = "";
         },
         overlayOpen(d){
             this.isOverlayOpen = true;
@@ -266,12 +286,10 @@ const app = new Vue({
             this.tempStartMin = "";
         },
         dataTimeTrans() {
-            //console.log("SEC : " + this.tempStartSec+1 + " " + "MIN : " + this.tempStartMin);
             this.tempStartSec = parseInt(this.tempStartSec) || 0;
             this.tempStartMin = parseInt(this.tempStartMin) || 0;
             if (this.tempStartSec > 59 || this.tempStartSec < 0) this.tempStartSec = 0;
             if (this.tempStartMin > 59 || this.tempStartMin < 0 ) this.tempStartMin = 0;
-            // console.log("SEC : " + this.tempStartSec + " " + "MIN : " + this.tempStartMin);
             return this.tempStartSec + this.tempStartMin * 60;
         },
         dataVideoIdTrans() {
