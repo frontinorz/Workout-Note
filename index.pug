@@ -1,15 +1,34 @@
 doctype html
 head
     meta(charset='UTF-8')
-    title Workout Note
+    title Workoutube
     meta(name='viewport', content='width=device-width, initial-scale=1')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
     link(rel='stylesheet prefetch', href='https://use.fontawesome.com/releases/v5.1.1/css/all.css')
+    link(rel="icon" type="image/png" href="images/icon.png")
     link(rel='stylesheet', type='text/css', media='screen', href='style.css')
 body
 #app.modelist
-    .container-videocapture
-
+    .btn.btn__videocapture(@click.prevent="videoCaptureOpen") Video
+    .container__overlay(v-show="isVideoOverlay")
+        .videocapture
+            .btn.videocapture__btn__close(@click.prevent="videoCaptureClose")
+                i.fas.fa-times
+            .videocapture__title 影片快截
+            .videocapture__input__wrapper
+                .videocapture__video__input Youtube分享連結
+                    input(type="text" placeholder="https://youtu.be/......" v-model="tempVideoId" v-bind:class="{'more__video__input-error' : !checkVideoId}")
+                button.videocapture__btn__ok(@click.prevent="videoCaptureInput") 確認
+            .videocapture__main
+                .videocapture__main__player
+                    #captureplayer
+                .videocapture__main__input
+                    input.videocapture__main__input__muscle(type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位")
+                    datalist(id="muscleList")
+                        option(v-for="d in muscleList" :value="d")
+                    input.videocapture__main__input__exercise(type="text" v-model="tempExercises" placeholder="訓練動作")
+                    textarea.videocapture__main__input__note(placeholder="輸入筆記......" v-model="tempNote")
+                    button.videocapture__btn__ok(@click.prevent="videoCaptureAddExercise") 新增動作卡片
     .container-list
         ul.schedule__wrapper
             li.schedule.schedule__holder
@@ -70,7 +89,7 @@ body
 
 
     .container
-        .container__overlay(v-show="isOverlayOpen")
+        .container__overlay(v-show="isOverlay")
             .more
                 .more__header
                     button.btn.more__btn__close(@click.prevent="overlayClose")
@@ -92,7 +111,7 @@ body
                             |秒
                         button.more__video__input__btnok(@click.prevent="dataAddVideo" :disabled="!checkVideoId" V-bind:class="{'more__video__input__btnok-disable' : !checkVideoId}") 加入影片
                     .more__player__wrapper(v-show="hasPlayer")
-                        #ytplayer
+                        #moreplayer
                     .more__content__note
                         textarea(placeholder="輸入筆記......" v-model="tempNote")
 

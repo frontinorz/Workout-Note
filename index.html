@@ -1,15 +1,42 @@
 <!DOCTYPE html>
 <head>
   <meta charset="UTF-8">
-  <title>Workout Note</title>
+  <title>Workoutube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="stylesheet prefetch" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css">
+  <link rel="icon" type="image/png" href="images/icon.png">
   <link rel="stylesheet" type="text/css" media="screen" href="style.css">
 </head>
 <body></body>
 <div class="modelist" id="app">
-  <div class="container-videocapture"></div>
+  <div class="btn btn__videocapture" @click.prevent="videoCaptureOpen">Video</div>
+  <div class="container__overlay" v-show="isVideoOverlay">
+    <div class="videocapture">
+      <div class="btn videocapture__btn__close" @click.prevent="videoCaptureClose"><i class="fas fa-times"></i></div>
+      <div class="videocapture__title">影片快截</div>
+      <div class="videocapture__input__wrapper">
+        <div class="videocapture__video__input">Youtube分享連結
+          <input type="text" placeholder="https://youtu.be/......" v-model="tempVideoId" v-bind:class="{'more__video__input-error' : !checkVideoId}">
+        </div>
+        <button class="videocapture__btn__ok" @click.prevent="videoCaptureInput">確認</button>
+      </div>
+      <div class="videocapture__main">
+        <div class="videocapture__main__player">
+          <div id="captureplayer"></div>
+        </div>
+        <div class="videocapture__main__input">
+          <input class="videocapture__main__input__muscle" type="text" list="muscleList" v-model="tempMuscle" placeholder="訓練部位">
+          <datalist id="muscleList">
+            <option v-for="d in muscleList" :value="d"></option>
+          </datalist>
+          <input class="videocapture__main__input__exercise" type="text" v-model="tempExercises" placeholder="訓練動作">
+          <textarea class="videocapture__main__input__note" placeholder="輸入筆記......" v-model="tempNote"></textarea>
+          <button class="videocapture__btn__ok" @click.prevent="videoCaptureAddExercise">新增動作卡片</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="container-list">
     <ul class="schedule__wrapper">
       <li class="schedule schedule__holder">
@@ -73,7 +100,7 @@
     </ul>
   </div>
   <div class="container">
-    <div class="container__overlay" v-show="isOverlayOpen">
+    <div class="container__overlay" v-show="isOverlay">
       <div class="more">
         <div class="more__header">
           <button class="btn more__btn__close" @click.prevent="overlayClose"><i class="fas fa-times"></i></button>
@@ -94,7 +121,7 @@
             <button class="more__video__input__btnok" @click.prevent="dataAddVideo" :disabled="!checkVideoId" V-bind:class="{'more__video__input__btnok-disable' : !checkVideoId}">加入影片</button>
           </div>
           <div class="more__player__wrapper" v-show="hasPlayer">
-            <div id="ytplayer"></div>
+            <div id="moreplayer"></div>
           </div>
           <div class="more__content__note">
             <textarea placeholder="輸入筆記......" v-model="tempNote"></textarea>

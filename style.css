@@ -34,9 +34,18 @@ body, html {
   margin: 50px auto;
   grid-gap: 20px; }
 
+#moreplayer {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+
+#captureplayer {
+  width: 100%;
+  height: 100%;
+  position: relative; }
+
 .modelist {
-  display: grid;
-  grid-template-columns: 1fr 1fr; }
+  display: grid; }
 
 .container__overlay {
   width: 100%;
@@ -49,6 +58,76 @@ body, html {
   left: 0;
   top: 0;
   z-index: 50; }
+
+.videocapture {
+  position: fixed;
+  display: grid;
+  grid-gap: 20px;
+  grid-template-rows: 50px 50px 1fr;
+  justify-items: center;
+  align-content: start;
+  padding: 20px;
+  border-radius: 20px;
+  background: #fff;
+  width: 95%;
+  height: 95%; }
+  .videocapture__btn__close {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    font-size: 1.5rem; }
+  .videocapture__btn__ok {
+    background: #f95959;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #eeeeee;
+    letter-spacing: 2px;
+    font-weight: 900; }
+    .videocapture__btn__ok:hover {
+      background: #fb8a8a; }
+  .videocapture__video__input input {
+    border: 1px solid #aaa;
+    padding: 5px 10px; }
+  .videocapture__title {
+    font-size: 1.5rem; }
+  .videocapture__main {
+    width: 100%;
+    display: grid;
+    justify-content: center;
+    grid-gap: 20px;
+    grid-template-columns: 2fr 1fr; }
+  .videocapture__main__player {
+    height: 100%;
+    width: 100%; }
+  .videocapture__main__input {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-rows: 1.5rem 1.2rem 1fr 1.5rem;
+    align-items: start; }
+    .videocapture__main__input__muscle {
+      padding-left: 2rem;
+      font-size: 1.5rem; }
+    .videocapture__main__input__exercise {
+      font-size: 1.2rem; }
+    .videocapture__main__input input {
+      border: none;
+      outline: none;
+      text-align: center; }
+    .videocapture__main__input textarea {
+      font-size: 1rem;
+      line-height: 1.5rem;
+      width: 100%;
+      height: 100%;
+      resize: none;
+      outline: none;
+      padding: 10px;
+      overflow: auto; }
+  .videocapture__input__wrapper {
+    display: grid;
+    grid-gap: 10px;
+    margin-bottom: 10px;
+    align-items: center;
+    grid-auto-flow: column; }
 
 .search {
   width: 50%;
@@ -155,10 +234,6 @@ body, html {
         grid-template-rows: 100px calc(100% - 120px); } }
   .more__player__wrapper {
     height: 100%; }
-  .more #ytplayer {
-    width: 100%;
-    height: 100%;
-    position: relative; }
   .more__video__inputwrap {
     display: grid;
     grid-gap: 10px;
@@ -449,6 +524,10 @@ body, html {
     cursor: initial; }
     .btn__disable:hover {
       transform: scale(1); }
+  .btn__videocapture {
+    position: fixed;
+    bottom: 30px;
+    left: 30px; }
 
 .isEditing {
   background: #f95959; }

@@ -110,13 +110,15 @@ const app = new Vue({
         isAdd: false,
         isScheduleEdit: false,
         isScheduleAdd: false,
-        isOverlayOpen: false,
+        isOverlay: false,
+        isVideoOverlay: false,
         isPlayer: false,
         isSearchResult: true,
-        exercisedata: data,
-        scheduledata: scheduleList,
+        exercisedata: JSON.parse(localStorage.getItem('exercisedata')) || data,
+        scheduledata: JSON.parse(localStorage.getItem('scheduledata')) || scheduleList,
         tempScheduleData: [],
         player: {},
+        playerCapture: {},
         overlay:{
             title: "Muscle",
             subtitle: "Exercise"
@@ -133,7 +135,7 @@ const app = new Vue({
         searchKeyword: ""
     },
     created(){
-
+        document.addEventListener('beforeunload', this.localStore());
     },
     mounted(){
         this.playerInit();
@@ -177,19 +179,27 @@ const app = new Vue({
         }
     },
     methods: {
+        localStore() {
+            // localStorage.setItem('exercisedata', JSON.stringify(this.exercisedata));
+            // localStorage.setItem('scheduledata', JSON.stringify(this.scheduledata));
+        },
         addEditing() {
             this.isAdd = true;
-            this.exercisedata.forEach(data => data.readonly = true);
+            //this.exercisedata.forEach(data => data.readonly = true);
         },
         addWorkout() {
             let work = {
                 muscle: this.tempMuscle,
                 exercises: this.tempExercises,
-                readonly: true
             };
-            this.exercisedata.unshift(work);
+            this.exercisedata.push(work);
+            localStorage.setItem('exercisedata', JSON.stringify(this.exercisedata));
             this.isAdd = false;
             this.resetInput();
+        },
+        searchCard() {
+            this.searchKeyword = this.searchInput.trim();
+            this.searchInput = "";
         },
         cancelAddWorkout() {
             this.isAdd = false;
@@ -197,7 +207,8 @@ const app = new Vue({
         },
         deleteWorkout() {
             this.exercisedata.splice(this.exercisedata.indexOf(this.datanow), 1);
-            this.isOverlayOpen = false;
+            localStorage.setItem('exercisedata', JSON.stringify(this.exercisedata));
+            this.isOverlay = false;
         },
         editWorkout(d) {
             this.exercisedata.forEach(data => { if (data !== d) data.readonly = true; });
@@ -219,6 +230,7 @@ const app = new Vue({
                 isEdit: false,
                 list: this.tempScheduleData
             });
+            localStorage.setItem('scheduledata', JSON.stringify(this.scheduledata));
             this.tempScheduleName = "";
             this.tempScheduleData = [];
             this.isScheduleAdd = false;
@@ -227,12 +239,15 @@ const app = new Vue({
             this.scheduledata.forEach(data => { if (data !== d) data.isEdit = false; });
             d.isEdit = !d.isEdit;
             this.isScheduleEdit = !this.isScheduleEdit;
+            localStorage.setItem('scheduledata', JSON.stringify(this.scheduledata));
         },
         scheduleDelete(d) {
             this.scheduledata.splice(this.scheduledata.indexOf(d), 1);
+            localStorage.setItem('scheduledata', JSON.stringify(this.scheduledata));
         },
         scheduleItemsDelete(s, a) {
             this.scheduledata[s].list.splice(this.scheduledata[s].list.indexOf(a), 1);
+            localStorage.setItem('scheduledata', JSON.stringify(this.scheduledata));
         },
         tempScheduleItemsDelete(a) {
             this.tempScheduleData.splice(this.tempScheduleData.indexOf(a), 1);
@@ -247,15 +262,9 @@ const app = new Vue({
                 time: ""
             };
             this.tempScheduleData.push(data);
-            //console.log(this.tempScheduleData);
-        },
-
-        resetInput() {
-            this.tempMuscle = "";
-            this.tempExercises = "";
         },
         overlayOpen(d){
-            this.isOverlayOpen = true;
+            this.isOverlay = true;
             this.datanow = d;
             this.overlay.title = d.muscle;
             this.overlay.subtitle = d.exercises;
@@ -264,9 +273,11 @@ const app = new Vue({
             if(d.isVideo)this.playerSet(d.video.id, d.video.startSec);
         },
         overlayClose() {
-            this.isOverlayOpen = false;
+            this.isOverlay = false;
             this.datanow.note = this.tempNote;
             this.player.stopVideo();
+
+            localStorage.setItem('exercisedata', JSON.stringify(this.exercisedata));
         },
         dataSort(data) {
             return data.sort((a, b) => a.muscle.localeCompare(b.muscle, 'zh-Hans-CN', {
@@ -279,11 +290,13 @@ const app = new Vue({
             if (!this.datanow.video) this.datanow.video = {};
             this.datanow.video.id = this.dataVideoIdTrans();
             this.datanow.video.startSec = this.dataTimeTrans();
-            console.log("START : " + this.datanow.video.startSec);
             this.playerSet(this.datanow.video.id, this.datanow.video.startSec);
+
             this.tempVideoId = "";
             this.tempStartSec = "";
             this.tempStartMin = "";
+
+            localStorage.setItem('exercisedata', JSON.stringify(this.exercisedata));
         },
         dataTimeTrans() {
             this.tempStartSec = parseInt(this.tempStartSec) || 0;
@@ -297,7 +310,11 @@ const app = new Vue({
         },
         playerInit() {
             setTimeout(() => {
-                this.player = new YT.Player('ytplayer', {
+                this.player = new YT.Player('moreplayer', {
+                    videoId: 'PEYBotdieQs',
+                    'rel': 0
+                });
+                this.playerCapture = new YT.Player('captureplayer', {
                     videoId: 'PEYBotdieQs',
                     'rel': 0
                 });
@@ -306,14 +323,40 @@ const app = new Vue({
         playerSet(id, startSec) {
             this.player.cueVideoById(id,startSec);
         },
-        playerGetTime() {
-            //let time = parseInt(this.player.getCurrentTime());
-            this.player.seekTo(42, false);
+        videoCaptureOpen(){
+            this.isVideoOverlay = true;
         },
-        searchCard() {
-            this.searchKeyword = this.searchInput.trim();
-            this.searchInput = "";
-        }
+        videoCaptureClose() {
+            this.isVideoOverlay = false;
+            this.tempVideoId = "";
+            this.playerCapture.stopVideo();
+        },
+        videoCaptureInput() {
+            this.playerCapture.cueVideoById(this.dataVideoIdTrans(), 0);
+        },
+        videoCaptureAddExercise() {
+            let time = parseInt(this.playerCapture.getCurrentTime()) || 0;
+            let videoid = this.dataVideoIdTrans();
+            console.log(videoid);
+            let work = {
+                muscle: this.tempMuscle,
+                exercises: this.tempExercises,
+                isVideo: true,
+                video: {
+                    id: videoid ,
+                    startSec: time
+                },
+                note: this.tempNote
+            };
+            this.exercisedata.unshift(work);
+            this.tempExercises = "";
+            this.tempNote = "";
+        },
+        resetInput() {
+            this.tempMuscle = "";
+            this.tempExercises = "";
+        },
+
     }
 });
 
